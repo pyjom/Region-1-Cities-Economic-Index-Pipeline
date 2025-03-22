@@ -14,7 +14,7 @@ provider "google" {
 }
 
 
-resource "google_storage_bucket" "demo-bucket" {
+resource "google_storage_bucket" "kestra-orchestration-1" {
   name          = var.gcs_bucket_name
   location      = var.location
   force_destroy = true
