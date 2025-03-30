@@ -1,0 +1,71 @@
+id: kestra_to_gcp_version4
+namespace: zoomcamp
+
+pluginDefaults:
+  - type: io.kestra.plugin.gcp
+    values:
+      serviceAccount: "{{kv('GCP_CREDS')}}"
+      projectId: "{{kv('GCP_PROJECT_ID')}}"
+      location: "{{kv('GCP_LOCATION')}}"
+      bucket: "{{kv('GCP_BUCKET_NAME')}}"
+
+
+tasks:
+  - id: for_each_city
+    type: io.kestra.plugin.core.flow.ForEach  # Process each city
+    values: ["SanCarlos_PS", "Alaminos_PS" , "Batac", "Laoag", "Vigan", "Candon", "SanFernando_LU", "Agoo", 
+              "Dagupan", "Urdaneta"]  # List of cities to process
+    concurrencyLimit: 4  # Adjust concurrency to control parallel execution
+    tasks:
+      - id: extract
+        type: io.kestra.plugin.scripts.shell.Commands
+        outputFiles:
+          - "{{ taskrun.value }}.csv"  # Corrected reference
+        taskRunner:
+          type: io.kestra.plugin.core.runner.Process
+        commands:
+          - wget -qO "{{ taskrun.value }}.csv" "https://raw.githubusercontent.com/pyjom/dez-project/develop/data/{{ taskrun.value }}.csv"
+
+      - id: log_extract_outputs
+        type: io.kestra.plugin.core.log.Log
+        message: "Extract outputs: {{ outputs.extract }}"
+
+
+
+      - id: upload_to_gcs
+        type: io.kestra.plugin.gcp.gcs.Upload
+        # from: "{{ outputs.extract.outputFiles[0] }}"  # Reference the extracted file
+        from: "{{ outputs.extract[taskrun.value].outputFiles[taskrun.value ~ '.csv'] }}"
+        to: "gs://{{kv('GCP_BUCKET_NAME')}}/data/{{ taskrun.value }}.csv"
+
+
+
+      - id: create_bq_table
+        type: io.kestra.plugin.gcp.bigquery.Query
+        sql: |
+          CREATE OR REPLACE TABLE `{{kv('GCP_PROJECT_ID')}}.{{kv('GCP_DATASET')}}.{{ taskrun.value }}_raw` (
+            PILLAR_INDICATOR STRING,
+            `2014` STRING,
+            `2015` STRING,
+            `2016` STRING,
+            `2017` STRING,
+            `2018` STRING,
+            `2019` STRING,
+            `2020` STRING,
+            `2021` STRING,
+            `2022` STRING,
+            `2023` STRING
+          )
+
+      - id: wait
+        type: io.kestra.plugin.core.flow.Sleep
+        duration: PT5S  # Wait for 2 seconds
+
+      - id: load_data_to_bigquery
+        type: io.kestra.plugin.gcp.bigquery.LoadFromGcs
+        from: ["gs://{{kv('GCP_BUCKET_NAME')}}/data/{{ taskrun.value }}.csv"]
+        destinationTable: "{{kv('GCP_PROJECT_ID')}}.{{kv('GCP_DATASET')}}.{{ taskrun.value }}_raw"
+        format: CSV
+        csvOptions:
+          skipLeadingRows: 1
+          fieldDelimiter: ","
