@@ -1,0 +1,14 @@
+*.csv
+*.parquet
+venv/
+.env
+__pycache__/
+*.log
+data/ # if you have a folder called data.
+secrets.yaml
+git.drawio
+terraform/infra/.terraform
+terraform/infra/.terraform.lock.hcl
+terraform/infra/terraform.tfstate
+terraform/infra/terraform.tfstate.backup
+.gitignoredbt_core/lib/python3.9/site-packages/pydata_google_auth/auth.py
