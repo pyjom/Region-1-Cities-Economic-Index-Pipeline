@@ -1,0 +1,15 @@
+models:
+  - name: phase1
+    description: "check if certain column is not null"
+    columns:
+      - name: table_name
+        description: "table name should have a value"
+        data_tests:
+          - not_null
+
+      - name: year
+        description: "year should have a value"
+        data_tests:
+          - not_null
+          # - accepted_values:
+          #     values: [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023] 

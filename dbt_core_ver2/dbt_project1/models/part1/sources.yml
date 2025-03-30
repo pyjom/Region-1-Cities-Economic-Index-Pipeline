@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: test_dataset_kestra
+    tables:
+      - name: Batac_raw
+      - name: Laoag_raw
+      - name: Vigan_raw
+      - name: Dagupan_raw
+      # Add more cities as needed
