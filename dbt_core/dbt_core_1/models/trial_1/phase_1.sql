@@ -5,7 +5,7 @@ WITH unpivoted_batac AS (
         CAST(year AS INT) AS year,
         PILLAR_INDICATOR,
         value
-    FROM `dataengineeringproject-454111.test_dataset_kestra.Batac_raw`
+    FROM {{source('landing', 'Batac_raw')}}
     UNPIVOT (value FOR year IN (`2015`, `2016`, `2017`, `2018`, `2019`, `2020`, `2021`, `2022`, `2023`))
 )
 SELECT 
