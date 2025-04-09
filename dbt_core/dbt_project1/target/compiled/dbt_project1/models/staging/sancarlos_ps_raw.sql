@@ -1,1 +1,0 @@
-SELECT * FROM `dataengineeringproject-454111.test_dataset_kestra.SanCarlos_PS_raw`
