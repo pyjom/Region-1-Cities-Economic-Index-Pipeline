@@ -23,3 +23,14 @@ Data Soure:
 https://cmci.dti.gov.ph/data-portal.php
 
 I used Selenium and PyautoGUI to crawl and extract the data of the 10 cities.
+
+
+### 3. Data Architecture
+
+<p align="center">
+  <img width="100%" src="images/archi.png" alt="Weather Project Architecture Overview">
+</p>
+
+
+
+The overall data pipeline is designed to fetch, process, store, and visualize 9 years worth of cities data using modern open-source tools and cloud services. The architecture leverages Docker containers for Kestra as the orchestrator, Google Cloud Bucket for data lake, BigQuery for data warehouse, dbt for data transformation, spark for complex transformation, and Looker Studio for visualization.
