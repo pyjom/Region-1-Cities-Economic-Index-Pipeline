@@ -24,4 +24,4 @@ tasks:
     type: io.kestra.plugin.core.kv.Set
     key: GCP_DATASET
     kvType: STRING
-    value: test_dataset_kestra
+    value: test_dataset_kestra # TODO replace with your dataset name
